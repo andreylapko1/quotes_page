@@ -6,6 +6,11 @@
     <title>Title</title>
 </head>
 <body>
-    <p>{{ quote }}</p>
+    <p>{{ quote_text }}</p>
+    {% if quote_author %}
+        <p>{{ quote_author }}</p>
+    {% else %}
+        <p>Автор неизвестен</p>
+    {% endif %}
 </body>
 </html>
