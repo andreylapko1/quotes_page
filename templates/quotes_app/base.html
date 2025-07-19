@@ -3,14 +3,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Quotes</title>
+    <link rel="stylesheet" href="{% static 'css/quotes_app/base.css' %}">
 </head>
 <body>
-    <p>{{ quote_text }}</p>
-    {% if quote_author %}
-        <p>{{ quote_author }}</p>
+<a id="popular-link" href="{% url 'popular_quotes_view' %}">Popular quotes</a>
+<div class="quote-display">
+    {% if quote %}
+        <p class="quote-text">"{{ quote.quote_text }}"</p>
+        <p class="quote-author">- {{ quote.quote_author }}</p>
+        {% if quote.category %}<p class="quote-category">Категория: {{ quote.category }}</p>{% endif %}
+        <p class="quote-views">Просмотров: {{ quote.views }}</p>
+
+        <div class="feedback-buttons">
+            <button class="like-button" data-quote-id="{{ quote.id }}">
+                Лайк (<span id="likes-{{ quote.id }}">{{ quote.likes }}</span>)
+            </button>
+            <button class="dislike-button" data-quote-id="{{ quote.id }}">
+                Дизлайк (<span id="dislikes-{{ quote.id }}">{{ quote.dislikes }}</span>)
+            </button>
+        </div>
+
     {% else %}
-        <p>Автор неизвестен</p>
+        <p>{{ error_message }}</p>
     {% endif %}
+</div>
+{% csrf_token %}
+
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const quoteId = this.dataset.quoteId;
+            const isLiked = this.dataset.isLiked === 'true';
+            const action = isLiked ? 'unlike' : 'like';
+            sendFeedback(quoteId, action, this);
+        });
+    });
+
+    document.querySelectorAll('.dislike-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const quoteId = this.dataset.quoteId;
+            const isDisliked = this.dataset.isDisliked === 'true';
+            const action = isDisliked ? 'undislike' : 'dislike';
+            sendFeedback(quoteId, action, this);
+        });
+    });
+
+    function sendFeedback(quoteId, action, clickedButton) {
+        const likeButton = document.querySelector(`.like-button[data-quote-id="${quoteId}"]`);
+        const dislikeButton = document.querySelector(`.dislike-button[data-quote-id="${quoteId}"]`);
+
+        likeButton.disabled = true;
+        dislikeButton.disabled = true;
+
+        fetch(`/quotes/feedback/${quoteId}/${action}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+        })
+        .then(response => {
+            if (!response.ok){
+                return response.json().then(errData => {
+                    throw new Error(errData.message || 'Server error');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success'){
+                document.getElementById(`likes-${quoteId}`).textContent = data.likes;
+                document.getElementById(`dislikes-${quoteId}`).textContent = data.dislikes;
+                updateButtonState(likeButton, dislikeButton, action);
+            } else {
+                console.error('Update error:', data.message || 'Unknown error');
+                alert(`Ошибка: ${data.message || 'Неизвестная ошибка обновления.'}`);
+            }
+        })
+        .catch(error => {
+            console.error('Network or JavaScript error:', error);
+            alert(`Произошла ошибка: ${error.message}`);
+        })
+        .finally(() => {
+            likeButton.disabled = false;
+            dislikeButton.disabled = false;
+        });
+    }
+
+    function updateButtonState(likeButton, dislikeButton, lastAction) {
+        likeButton.classList.remove('active');
+        dislikeButton.classList.remove('active');
+
+        likeButton.dataset.isLiked = 'false';
+        likeButton.dataset.isDisliked = 'false';
+        dislikeButton.dataset.isLiked = 'false';
+        dislikeButton.dataset.isDisliked = 'false';
+
+        if (lastAction === 'like') {
+            likeButton.classList.add('active');
+            likeButton.dataset.isLiked = 'true';
+        } else if (lastAction === 'dislike') {
+            dislikeButton.classList.add('active');
+            dislikeButton.dataset.isDisliked = 'true';
+        }
+    }
+</script>
+
+
 </body>
 </html>

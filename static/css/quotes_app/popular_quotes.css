@@ -1,0 +1,66 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f2f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+.quote {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    padding: 25px 35px;
+    margin: 15px 0;
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.quote-text {
+    font-size: 1.6em;
+    font-style: italic;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.quote p {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #34495e;
+    margin: 0;
+}
+#popular-link {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #3498db;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; /* Add some space below it */
+}
+
+#popular-link:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+#popular-link:active {
+    background-color: #216a9a;
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
