@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Popular quotes</title>
+    <link rel="stylesheet" href="{% static 'css/quotes_app/popular_quotes.css' %}">
+</head>
+<body>
+<a id="popular-link" href="{% url 'base_view' %}">Home</a>
+    {% for quote in quotes %}
+    <div class="quote">
+        <p class="quote-text">{{ quote.quote_text }}</p>
+        <br>
+        <p>Likes {{ quote.likes }}</p>
+        <p>Dislikes {{ quote.dislikes }}</p>
+        {% if quote.category %}
+            <p>Category {{ quote.category }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</body>
+</html>
