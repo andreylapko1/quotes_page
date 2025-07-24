@@ -11,6 +11,7 @@ class BaseView(View):
     def get(self, request):
         quotes = Quote.objects.all()
         if get_quote:
+            get_quote()
             weighted_quotes = []
             for quote in quotes:
                 weight = quote.weight
